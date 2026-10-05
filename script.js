@@ -4,8 +4,10 @@ let sphere, cube, plane;
 let step = 0;
 
 function init() {
+    // シーン
     scene = new THREE.Scene();
 
+    // カメラ（固定）
     camera = new THREE.PerspectiveCamera(
         45,
         window.innerWidth / window.innerHeight,
@@ -13,12 +15,13 @@ function init() {
         1000
     );
 
+    // レンダラー
     renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setClearColor(new THREE.Color(0xEEEEEE));
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
 
-    // 軸
+    // 軸表示
     const axes = new THREE.AxesHelper(20);
     scene.add(axes);
 
@@ -50,10 +53,11 @@ function init() {
     sphere.position.set(20, 4, 2);
     scene.add(sphere);
 
-    // カメラ固定
+    // カメラ位置（固定）
     camera.position.set(-30, 40, 30);
     camera.lookAt(scene.position);
 
+    // リサイズ対応
     window.addEventListener("resize", onWindowResize);
 }
 
@@ -62,18 +66,19 @@ function animate() {
 
     step += 0.03;
 
-    // --- 青い球：上下＋左右に行ったり来たり ---
+    // --- 青い球：上下＋左右に移動 ---
     sphere.position.y = 4 + Math.sin(step) * 6;   // 上下
     sphere.position.x = 20 + Math.cos(step) * 6;  // 左右
 
-    // --- 赤いキューブ：上下＋左右に行ったり来たり ---
-    cube.position.y = 3 + Math.sin(step * 1.3) * 5;  // 上下
+    // --- 赤いキューブ：上下＋左右に移動 ---
+    cube.position.y = 3 + Math.sin(step * 1.2) * 5;  // 上下
     cube.position.x = -4 + Math.cos(step * 1.1) * 5; // 左右
 
-    // --- 自転（ゆっくり） ---
+    // --- 自転（お好みで） ---
     cube.rotation.y += 0.01;
     sphere.rotation.y += 0.01;
 
+    // カメラは一切動かさない
     renderer.render(scene, camera);
 }
 
