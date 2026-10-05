@@ -4,12 +4,17 @@ let sphere, cube, plane;
 // 位置と速度
 let sphereY = 10;
 let sphereVY = 0;
+let sphereX = 20;
+let sphereVX = 0.3;
+
 let cubeY = 10;
 let cubeVY = 0;
+let cubeX = -4;
+let cubeVX = 0.25;
 
-// 重力
-const gravity = -0.4;
-const bounce = 0.8; // 反発係数（跳ね返りの強さ）
+// 重力と反発
+const gravity = -0.5;
+const bounce = 0.85;
 
 function init() {
     scene = new THREE.Scene();
@@ -26,7 +31,7 @@ function init() {
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
 
-    // 平面（地面）
+    // 地面
     const planeGeometry = new THREE.PlaneGeometry(60, 20);
     const planeMaterial = new THREE.MeshBasicMaterial({ color: 0xcccccc });
     plane = new THREE.Mesh(planeGeometry, planeMaterial);
@@ -41,7 +46,7 @@ function init() {
         wireframe: true
     });
     cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
-    cube.position.set(-4, cubeY, 0);
+    cube.position.set(cubeX, cubeY, 0);
     scene.add(cube);
 
     // 青い球
@@ -51,7 +56,7 @@ function init() {
         wireframe: true
     });
     sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
-    sphere.position.set(20, sphereY, 2);
+    sphere.position.set(sphereX, sphereY, 2);
     scene.add(sphere);
 
     // カメラ固定
@@ -64,29 +69,37 @@ function init() {
 function animate() {
     requestAnimationFrame(animate);
 
-    // --- 青い球のバウンド ---
-    sphereVY += gravity;        // 重力で落ちる
-    sphereY += sphereVY;        // 位置更新
+    // --- 青い球：上下＋左右に永遠に跳ねる ---
+    sphereVY += gravity;
+    sphereY += sphereVY;
+    sphereX += sphereVX;
 
-    if (sphereY <= 4) {         // 地面に当たったら
+    if (sphereY <= 4) {
         sphereY = 4;
-        sphereVY *= -bounce;    // 反発して跳ね返る
+        sphereVY *= -bounce;
     }
 
-    sphere.position.y = sphereY;
-    sphere.position.x = 20 + Math.sin(sphereY * 0.2) * 5; // 左右ゆらゆら
+    if (sphereX > 30 || sphereX < 10) {
+        sphereVX *= -1; // 左右反転
+    }
 
-    // --- 赤いキューブのバウンド ---
+    sphere.position.set(sphereX, sphereY, 2);
+
+    // --- 赤いキューブ：上下＋左右に永遠に跳ねる ---
     cubeVY += gravity;
     cubeY += cubeVY;
+    cubeX += cubeVX;
 
     if (cubeY <= 4) {
         cubeY = 4;
         cubeVY *= -bounce;
     }
 
-    cube.position.y = cubeY;
-    cube.position.x = -4 + Math.sin(cubeY * 0.3) * 5;
+    if (cubeX > 25 || cubeX < -10) {
+        cubeVX *= -1;
+    }
+
+    cube.position.set(cubeX, cubeY, 0);
 
     renderer.render(scene, camera);
 }
