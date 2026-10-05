@@ -1,7 +1,7 @@
 let scene, camera, renderer;
-let sphere, cube, plane;
+let sphereGeometry, sphere, cube, plane;
 
-// 公転角度（カメラ用）
+// カメラ公転用
 let cameraAngle = 0;
 
 function init() {
@@ -42,7 +42,7 @@ function init() {
     scene.add(cube);
 
     // 球
-    const sphereGeometry = new THREE.SphereGeometry(4, 20, 20);
+    sphereGeometry = new THREE.SphereGeometry(4, 20, 20);
     const sphereMaterial = new THREE.MeshBasicMaterial({
         color: 0x7777ff,
         wireframe: true
@@ -58,13 +58,19 @@ function init() {
     window.addEventListener("resize", onWindowResize);
 }
 
+let step = 0;
+
 function animate() {
     requestAnimationFrame(animate);
 
-    // --- 自転（各オブジェクト自身のY軸回転） ---
+    // --- 球の上下運動（元の動き） ---
+    step += 0.04;
+    sphere.position.y = 4 + Math.abs(Math.sin(step)) * 10;
+
+    // --- 自転（Y軸回転） ---
     cube.rotation.y += 0.01;
     sphere.rotation.y += 0.01;
-    plane.rotation.z += 0.005; // 平面はZ軸で少し回すと見やすい
+    plane.rotation.z += 0.005;
 
     // --- カメラの公転（Y軸の周りを回る） ---
     cameraAngle += 0.01;
