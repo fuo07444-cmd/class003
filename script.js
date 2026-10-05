@@ -1,7 +1,8 @@
 let scene, camera, renderer;
-let sphereGeometry, sphere, cube, plane;
+let sphere, cube, plane;
 
-// カメラ公転用
+// アニメーション用
+let step = 0;
 let cameraAngle = 0;
 
 function init() {
@@ -14,7 +15,7 @@ function init() {
         1000
     );
 
-    renderer = new THREE.WebGLRenderer();
+    renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setClearColor(new THREE.Color(0xEEEEEE));
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
@@ -42,7 +43,7 @@ function init() {
     scene.add(cube);
 
     // 球
-    sphereGeometry = new THREE.SphereGeometry(4, 20, 20);
+    const sphereGeometry = new THREE.SphereGeometry(4, 20, 20);
     const sphereMaterial = new THREE.MeshBasicMaterial({
         color: 0x7777ff,
         wireframe: true
@@ -58,26 +59,29 @@ function init() {
     window.addEventListener("resize", onWindowResize);
 }
 
-let step = 0;
-
 function animate() {
     requestAnimationFrame(animate);
 
-    // --- 球の上下運動（元の動き） ---
-    step += 0.04;
-    sphere.position.y = 4 + Math.abs(Math.sin(step)) * 10;
+    // --- 球の上下運動（なめらか） ---
+    step += 0.02;
+    sphere.position.y = 4 + Math.sin(step) * 5;
 
-    // --- 自転（Y軸回転） ---
+    // --- 球の左右揺れ ---
+    sphere.position.x = 20 + Math.cos(step * 0.7) * 3;
+
+    // --- 自転（ゆっくり） ---
     cube.rotation.y += 0.01;
     sphere.rotation.y += 0.01;
-    plane.rotation.z += 0.005;
+    plane.rotation.z += 0.003;
 
-    // --- カメラの公転（Y軸の周りを回る） ---
-    cameraAngle += 0.01;
+    // --- カメラの公転（動画みたいにゆっくり） ---
+    cameraAngle += 0.005;
     const radius = 50;
 
     camera.position.x = radius * Math.cos(cameraAngle);
     camera.position.z = radius * Math.sin(cameraAngle);
+    camera.position.y = 30 + Math.sin(cameraAngle * 0.5) * 10; // 上下にゆっくり揺れる
+
     camera.lookAt(scene.position);
 
     renderer.render(scene, camera);
