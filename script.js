@@ -1,9 +1,7 @@
 let scene, camera, renderer;
 let sphere, cube, plane;
 
-// アニメーション用
 let step = 0;
-let cameraAngle = 0;
 
 function init() {
     scene = new THREE.Scene();
@@ -32,7 +30,7 @@ function init() {
     plane.position.set(15, 0, 0);
     scene.add(plane);
 
-    // 立方体
+    // 赤いキューブ
     const cubeGeometry = new THREE.BoxGeometry(4, 4, 4);
     const cubeMaterial = new THREE.MeshBasicMaterial({
         color: 0xff0000,
@@ -42,7 +40,7 @@ function init() {
     cube.position.set(-4, 3, 0);
     scene.add(cube);
 
-    // 球
+    // 青い球
     const sphereGeometry = new THREE.SphereGeometry(4, 20, 20);
     const sphereMaterial = new THREE.MeshBasicMaterial({
         color: 0x7777ff,
@@ -52,7 +50,7 @@ function init() {
     sphere.position.set(20, 4, 2);
     scene.add(sphere);
 
-    // カメラ初期位置
+    // カメラ固定
     camera.position.set(-30, 40, 30);
     camera.lookAt(scene.position);
 
@@ -62,27 +60,19 @@ function init() {
 function animate() {
     requestAnimationFrame(animate);
 
-    // --- 球の上下運動（なめらか） ---
-    step += 0.02;
-    sphere.position.y = 4 + Math.sin(step) * 5;
+    step += 0.03;
 
-    // --- 球の左右揺れ ---
-    sphere.position.x = 20 + Math.cos(step * 0.7) * 3;
+    // --- 青い球：上下＋左右に行ったり来たり ---
+    sphere.position.y = 4 + Math.sin(step) * 6;   // 上下
+    sphere.position.x = 20 + Math.cos(step) * 6;  // 左右
+
+    // --- 赤いキューブ：上下＋左右に行ったり来たり ---
+    cube.position.y = 3 + Math.sin(step * 1.3) * 5;  // 上下
+    cube.position.x = -4 + Math.cos(step * 1.1) * 5; // 左右
 
     // --- 自転（ゆっくり） ---
     cube.rotation.y += 0.01;
     sphere.rotation.y += 0.01;
-    plane.rotation.z += 0.003;
-
-    // --- カメラの公転（動画みたいにゆっくり） ---
-    cameraAngle += 0.005;
-    const radius = 50;
-
-    camera.position.x = radius * Math.cos(cameraAngle);
-    camera.position.z = radius * Math.sin(cameraAngle);
-    camera.position.y = 30 + Math.sin(cameraAngle * 0.5) * 10; // 上下にゆっくり揺れる
-
-    camera.lookAt(scene.position);
 
     renderer.render(scene, camera);
 }
