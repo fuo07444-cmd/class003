@@ -85,6 +85,10 @@ function animate() {
     cube.position.x = -4 + 10 * Math.cos(step);
     cube.position.y = 3 + 10 * Math.abs(Math.sin(step));
 
+    // ★★★ 赤いキューブ：自転（追加したのはここだけ） ★★★
+    cube.rotation.x += 0.05;
+    cube.rotation.y += 0.05;
+
     renderer.render(scene, camera);
 }
 
