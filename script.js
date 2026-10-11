@@ -1,4 +1,4 @@
-let scene, camera, renderer,sphereGeometry,sphere,cube,plane;
+let scene, camera, renderer, sphereGeometry, sphere, cube, plane;
 
 // once everything is loaded, we run our Three.js stuff.
 function init() {
@@ -6,7 +6,12 @@ function init() {
     scene = new THREE.Scene();
 
     // create a camera, which defines where we're looking at.
-    camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera = new THREE.PerspectiveCamera(
+        45,
+        window.innerWidth / window.innerHeight,
+        0.1,
+        1000
+    );
 
     // create a render and set the size
     renderer = new THREE.WebGLRenderer();
@@ -19,7 +24,7 @@ function init() {
 
     // create the ground plane
     var planeGeometry = new THREE.PlaneGeometry(60, 20);
-    var planeMaterial = new THREE.MeshBasicMaterial({color: 0xcccccc});
+    var planeMaterial = new THREE.MeshBasicMaterial({ color: 0xcccccc });
     plane = new THREE.Mesh(planeGeometry, planeMaterial);
 
     // rotate and position the plane
@@ -33,7 +38,10 @@ function init() {
 
     // create a cube
     var cubeGeometry = new THREE.BoxGeometry(4, 4, 4);
-    var cubeMaterial = new THREE.MeshBasicMaterial({color: 0xff0000, wireframe: true});
+    var cubeMaterial = new THREE.MeshBasicMaterial({
+        color: 0xff0000,
+        wireframe: true
+    });
     cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
 
     // position the cube
@@ -46,7 +54,10 @@ function init() {
 
     // create a sphere
     sphereGeometry = new THREE.SphereGeometry(4, 20, 20);
-    var sphereMaterial = new THREE.MeshBasicMaterial({color: 0x7777ff, wireframe: true});
+    var sphereMaterial = new THREE.MeshBasicMaterial({
+        color: 0x7777ff,
+        wireframe: true
+    });
     sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
 
     // position the sphere
@@ -64,33 +75,38 @@ function init() {
     camera.lookAt(scene.position);
 
     // add the output of the renderer to the html element
-    //document.getElementById("WebGL-output").appendChild(renderer.domElement);
     document.body.appendChild(renderer.domElement);
 
     // render the scene
     renderer.render(scene, camera);
 }
-  let angle =  Math.atan2(30, -30), step = 0;
-  const radius = Math.sqrt(30 * 30 + 30 * 30);
+
+let step = 0;
 
 function animate() {
-    // bounce the sphere up and down
-  step += 0.04;
-  sphere.position.x = 20 + ( 10 * (Math.cos(step)));
-  sphere.position.y = 2 + ( 10 * Math.abs(Math.sin(step)));
+    requestAnimationFrame(animate);
 
-  requestAnimationFrame(animate);
-  renderer.render(scene, camera);
+    step += 0.04;
+
+    // 青い球：左右ゆらゆら＋上下ぽーん
+    sphere.position.x = 20 + 10 * Math.cos(step);
+    sphere.position.y = 2 + 10 * Math.abs(Math.sin(step));
+
+    // 赤いキューブ：左右ゆらゆら＋上下ぽーん（同じ動き）
+    cube.position.x = -4 + 10 * Math.cos(step);
+    cube.position.y = 3 + 10 * Math.abs(Math.sin(step));
+
+    renderer.render(scene, camera);
 }
+
 /* ウィンドウ変更時にサイズを維持する処理 */
 function onWindowResize() {
-  camera.aspect = window.innerWidth / window.innerHeight;
-  camera.updateProjectionMatrix();
-  renderer.setSize(window.innerWidth, window.innerHeight);
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
 }
 
 window.addEventListener("resize", onWindowResize);
 
-//window.onload = init;
 init();
 animate();
