@@ -1,4 +1,4 @@
-let scene, camera, renderer, sphereGeometry, sphere, cube, plane;
+let scene, camera, renderer, sphere, cube, plane;
 
 function init() {
     scene = new THREE.Scene();
@@ -36,7 +36,7 @@ function init() {
     scene.add(cube);
 
     // 青い球
-    sphereGeometry = new THREE.SphereGeometry(4, 20, 20);
+    const sphereGeometry = new THREE.SphereGeometry(4, 20, 20);
     const sphereMaterial = new THREE.MeshBasicMaterial({
         color: 0x7777ff,
         wireframe: true
@@ -63,7 +63,7 @@ function animate() {
     sphere.position.x = 20 + 10 * Math.cos(step);
     sphere.position.y = 2 + 10 * Math.abs(Math.sin(step));
 
-    // 赤いキューブ：左右ゆらゆら＋上下ぽーん（完全に反映）
+    // 赤いキューブ：左右ゆらゆら＋上下ぽーん（完全に動く）
     cube.position.x = -4 + 10 * Math.cos(step);
     cube.position.y = 3 + 10 * Math.abs(Math.sin(step));
 
