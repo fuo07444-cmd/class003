@@ -10,9 +10,6 @@ function init() {
         1000
     );
 
-    camera.position.set(-30, 20, 40);
-    camera.lookAt(scene.position);
-
     renderer = new THREE.WebGLRenderer();
     renderer.setClearColor(new THREE.Color(0xEEEEEE));
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -48,40 +45,38 @@ function init() {
     sphere.position.set(20, 4, 2);
     scene.add(sphere);
 
+    // カメラ
+    camera.position.set(-30, 40, 30);
+    camera.lookAt(scene.position);
+
     document.body.appendChild(renderer.domElement);
 }
 
 let step = 0;
-let orbitAngle = 0;
 
 function animate() {
     requestAnimationFrame(animate);
 
     step += 0.04;
-    orbitAngle += 0.03;
 
-    // 青い球：上下に跳ねる
-    sphere.position.y = 4 + 10 * Math.abs(Math.sin(step));
+    // 青い球：左右ゆらゆら＋上下ぽーん
+    sphere.position.x = 20 + 10 * Math.cos(step);
+    sphere.position.y = 2 + 10 * Math.abs(Math.sin(step));
 
-    // 赤いキューブ：跳ねる
-    cube.position.y = 2 + 10 * Math.abs(Math.sin(step));
-
-    // 赤いキューブ：公転（円運動）
-    cube.position.x = 10 + 12 * Math.cos(orbitAngle);
-    cube.position.z = 12 * Math.sin(orbitAngle);
-
-    // 赤いキューブ：自転
-    cube.rotation.x += 0.05;
-    cube.rotation.y += 0.07;
+    // 赤いキューブ：左右ゆらゆら＋上下ぽーん（完全に動く）
+    cube.position.x = -4 + 10 * Math.cos(step);
+    cube.position.y = 3 + 10 * Math.abs(Math.sin(step));
 
     renderer.render(scene, camera);
 }
 
-window.addEventListener("resize", () => {
+function onWindowResize() {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
-});
+}
+
+window.addEventListener("resize", onWindowResize);
 
 init();
 animate();
