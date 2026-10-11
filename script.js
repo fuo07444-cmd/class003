@@ -1,92 +1,96 @@
-// シーンを作成
-const scene = new THREE.Scene();
-scene.background = new THREE.Color(0xffffff);
+let scene, camera, renderer,sphereGeometry,sphere,cube,plane;
 
-// カメラを作成
-const camera = new THREE.PerspectiveCamera(
-    75,
-    window.innerWidth / window.innerHeight,
-    0.1,
-    1000
-);
-camera.position.set(40, 35, 50);
-camera.lookAt(0, 5, 0);
+// once everything is loaded, we run our Three.js stuff.
+function init() {
+    // here we'll put the Three.js stuff
+    scene = new THREE.Scene();
 
-// レンダラーを作成
-const renderer = new THREE.WebGLRenderer({ antialias: true });
-renderer.setSize(window.innerWidth, window.innerHeight);
-document.body.appendChild(renderer.domElement);
+    // create a camera, which defines where we're looking at.
+    camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
 
-// 光源
-const light = new THREE.DirectionalLight(0xffffff, 1);
-light.position.set(10, 20, 10);
-scene.add(light);
+    // create a render and set the size
+    renderer = new THREE.WebGLRenderer();
+    renderer.setClearColor(new THREE.Color(0xEEEEEE));
+    renderer.setSize(window.innerWidth, window.innerHeight);
 
-const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
-scene.add(ambientLight);
+    // show axes in the screen
+    var axes = new THREE.AxesHelper(20);
+    scene.add(axes);
 
-// 地面
-const groundGeometry = new THREE.PlaneGeometry(100, 100);
-const groundMaterial = new THREE.MeshBasicMaterial({
-    color: 0xeeeeee,
-    side: THREE.DoubleSide
-});
-const ground = new THREE.Mesh(groundGeometry, groundMaterial);
-ground.rotation.x = -Math.PI / 2;
-ground.position.y = 0;
-scene.add(ground);
+    // create the ground plane
+    var planeGeometry = new THREE.PlaneGeometry(60, 20);
+    var planeMaterial = new THREE.MeshBasicMaterial({color: 0xcccccc});
+    plane = new THREE.Mesh(planeGeometry, planeMaterial);
 
-// 赤いキューブ
-const cubeGeometry = new THREE.BoxGeometry(4, 4, 4);
-const cubeMaterial = new THREE.MeshBasicMaterial({
-    color: 0xff0000,
-    wireframe: true
-});
-const cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
-scene.add(cube);
+    // rotate and position the plane
+    plane.rotation.x = -0.5 * Math.PI;
+    plane.position.x = 15;
+    plane.position.y = 0;
+    plane.position.z = 0;
 
-// 青いボール
-const sphereGeometry = new THREE.SphereGeometry(4, 32, 32);
-const sphereMaterial = new THREE.MeshBasicMaterial({
-    color: 0x0000ff
-});
-const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
-sphere.position.x = 20;
-scene.add(sphere);
+    // add the plane to the scene
+    scene.add(plane);
 
-// アニメーション用の変数
-let step = 0;
-let orbitAngle = 0;
+    // create a cube
+    var cubeGeometry = new THREE.BoxGeometry(4, 4, 4);
+    var cubeMaterial = new THREE.MeshBasicMaterial({color: 0xff0000, wireframe: true});
+    cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
 
-// アニメーション
-function animate() {
-    requestAnimationFrame(animate);
+    // position the cube
+    cube.position.x = -4;
+    cube.position.y = 3;
+    cube.position.z = 0;
 
-    step += 0.04;
-    orbitAngle += 0.02;
+    // add the cube to the scene
+    scene.add(cube);
 
-    // 青いボール：上下に高く跳ねる
-    sphere.position.y = 4 + 10 * Math.abs(Math.sin(step));
+    // create a sphere
+    sphereGeometry = new THREE.SphereGeometry(4, 20, 20);
+    var sphereMaterial = new THREE.MeshBasicMaterial({color: 0x7777ff, wireframe: true});
+    sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
 
-    // 赤いキューブ：上下に高く跳ねる
-    cube.position.y = 2 + 10 * Math.abs(Math.sin(step));
+    // position the sphere
+    sphere.position.x = 20;
+    sphere.position.y = 4;
+    sphere.position.z = 2;
 
-    // 赤いキューブ：Y軸の周りを公転する
-    cube.position.x = 10 + 12 * Math.cos(orbitAngle);
-    cube.position.z = 12 * Math.sin(orbitAngle);
+    // add the sphere to the scene
+    scene.add(sphere);
 
-    // 赤いキューブ：自転する
-    cube.rotation.x += 0.03;
-    cube.rotation.y += 0.05;
+    // position and point the camera to the center of the scene
+    camera.position.x = -30;
+    camera.position.y = 40;
+    camera.position.z = 30;
+    camera.lookAt(scene.position);
 
+    // add the output of the renderer to the html element
+    //document.getElementById("WebGL-output").appendChild(renderer.domElement);
+    document.body.appendChild(renderer.domElement);
+
+    // render the scene
     renderer.render(scene, camera);
 }
+  let angle =  Math.atan2(30, -30), step = 0;
+  const radius = Math.sqrt(30 * 30 + 30 * 30);
 
+function animate() {
+    // bounce the sphere up and down
+  step += 0.04;
+  sphere.position.x = 20 + ( 10 * (Math.cos(step)));
+  sphere.position.y = 2 + ( 10 * Math.abs(Math.sin(step)));
+
+  requestAnimationFrame(animate);
+  renderer.render(scene, camera);
+}
+/* ウィンドウ変更時にサイズを維持する処理 */
+function onWindowResize() {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+}
+
+window.addEventListener("resize", onWindowResize);
+
+//window.onload = init;
+init();
 animate();
-
-// ウィンドウサイズ変更に対応
-window.addEventListener("resize", function () {
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
-});
