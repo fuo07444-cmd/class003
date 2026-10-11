@@ -10,7 +10,6 @@ function init() {
         1000
     );
 
-    // ★ カメラ位置を下げて動きが見えるように調整
     camera.position.set(-30, 20, 40);
     camera.lookAt(scene.position);
 
@@ -61,7 +60,7 @@ function animate() {
     step += 0.04;
     orbitAngle += 0.03;
 
-    // 青い球：上下に跳ねるだけ
+    // 青い球：上下に跳ねる
     sphere.position.y = 4 + 10 * Math.abs(Math.sin(step));
 
     // 赤いキューブ：跳ねる
